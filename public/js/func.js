@@ -29,6 +29,7 @@ function GiveId(){
 GiveId();
 
 function PutStone(){
+    const directions = ["N","NE","E","SE","S","SW","W","NW"];
     const this_r = Number(this.id.match(/\d+/g)[0]);
     const this_c = Number(this.id.match(/\d+/g)[1]);
     const status_around ={
@@ -43,14 +44,9 @@ function PutStone(){
     }else if(status_around.above != 1 && status_around.under != 1 && status_around.right != 1 && status_around.left != 1){
         alert("Error: Put to other cell!");
     }else{
-        ReverseCheck(this_r, this_c, this.id, "N");
-        ReverseCheck(this_r, this_c, this.id, "NE");
-        ReverseCheck(this_r, this_c, this.id, "E");
-        ReverseCheck(this_r, this_c, this.id, "SE");
-        ReverseCheck(this_r, this_c, this.id, "S");
-        ReverseCheck(this_r, this_c, this.id, "SW");
-        ReverseCheck(this_r, this_c, this.id, "W");
-        ReverseCheck(this_r, this_c, this.id, "NW");
+        for(let i=0; i<directions.length; i++){
+            Reverse(this_r, this_c, this.id, directions[i]);
+        }
         if(you.player == "A"){
             you.player = "B";
             you.stone = "○";
@@ -58,49 +54,50 @@ function PutStone(){
             you.player = "A";
             you.stone = "●";
         };
+        Player();
         this.dataset.status = 1;
     };
 }
 
-function ReverseCheck(this_r, this_c, id, direction){
+function Reverse(this_r, this_c, id, direction){
     let check_r
     let check_c
     if(direction == "N"){
-        let check_r = this_r - 1;
-        let check_c = this_c;
+        check_r = this_r - 1;
+        check_c = this_c;
     }else if(direction == "NE"){
-        let check_r = this_r - 1;
-        let check_c = this_c + 1;
+        check_r = this_r - 1;
+        check_c = this_c + 1;
     }else if(direction == "E"){
-        let check_r = this_r;
-        let check_c = this_c + 1;
+        check_r = this_r;
+        check_c = this_c + 1;
     }else if(direction == "SE"){
-        let check_r = this_r + 1;
-        let check_c = this_c + 1;
+        check_r = this_r + 1;
+        check_c = this_c + 1;
     }else if(direction == "S"){
-        let check_r = this_r + 1;
-        let check_c = this_c;
+        check_r = this_r + 1;
+        check_c = this_c;
     }else if(direction == "SW"){
-        let check_r = this_r + 1;
-        let check_c = this_c - 1;
+        check_r = this_r + 1;
+        check_c = this_c - 1;
     }else if(direction == "W"){
-        let check_r = this_r;
-        let check_c = this_c - 1;
+        check_r = this_r;
+        check_c = this_c - 1;
     }else if(direction == "NW"){
-        let check_r = this_r - 1;
-        let check_c = this_c - 1;
+        check_r = this_r - 1;
+        check_c = this_c - 1;
     }
     let stone_other_side = "absent";
     let another_stone_num = 0;
-    console.log(`you = player:${you.player}, stone:${you.stone}`);
-    console.log(`this_id: ${id}`);
+    // console.log(`you = player:${you.player}, stone:${you.stone}`);
+    // console.log(`this_id: ${id}`);
     for(let i=0; i<100; i++){
         let check_stone = document.getElementById(`stone${check_r}-${check_c}`);
         if(check_stone.dataset.status == 2 || check_stone.innerHTML == ""){
-            console.log("チェック終了：裏返し無し")
+            // console.log("チェック終了：裏返し無し")
             break;
         }else if(check_stone.innerHTML == you.stone){
-            console.log("チェック終了：自分の石がある");
+            // console.log("チェック終了：自分の石がある");
             stone_other_side = "exist";
             break;
         }else{
@@ -133,8 +130,10 @@ function ReverseCheck(this_r, this_c, id, direction){
         }
     };
     if(stone_other_side == "exist" && another_stone_num > 0){
+        console.log(`${direction}方向に裏返しました`);
+        //石を置く
         document.getElementById(id).innerHTML = you.stone;
-
+        //各方向を裏返す
         if(direction == "N"){
             for(let i=0; i<another_stone_num; i++){
                 document.getElementById(`stone${this_r - 1 - i}-${this_c}`).innerHTML = you.stone;
@@ -170,71 +169,6 @@ function ReverseCheck(this_r, this_c, id, direction){
         };
     };
 };
-
-function ReverseCheck_N(this_r, this_c, id){
-    //上方向にチェック
-    let check_r = this_r - 1;
-    let check_c = this_c;
-    let stone_other_side = "absent";
-    let another_stone_num = 0;
-    console.log(`this_id: ${id}`);
-    console.log(`you.stone = ${you.stone}`);
-    for(let i=0; i<100; i++){
-        let check_stone = document.getElementById(`stone${check_r}-${check_c}`);
-        if(check_stone.dataset.status == 2 || check_stone.innerHTML == ""){
-            console.log("チェック終了：裏返し無し")
-            break;
-        }else if(check_stone.innerHTML == you.stone){
-            console.log("チェック終了：同色の石");
-            stone_other_side = "exist";
-            break;
-        }else{
-            check_r = check_r - 1;
-            another_stone_num = another_stone_num + 1;
-        }
-    };
-    if(stone_other_side == "exist" && another_stone_num > 0){
-        document.getElementById(id).innerHTML = you.stone;
-        for(let i=0; i<another_stone_num; i++){
-            document.getElementById(`stone${this_r - i - 1}-${this_c}`).innerHTML = you.stone;
-        };
-    };
-}
-
-function ReverseCheck_E(this_r, this_c, id){
-    //右方向にチェック
-    let check_r = this_r;
-    let check_c = this_c + 1;
-    let stone_other_side = "absent";
-    let another_stone_num = 0;
-    console.log(`you.stone = ${you.stone}`);
-    for(let i=0; i<100; i++){
-        console.log(`i: ${i}`);
-        let check_stone = document.getElementById(`stone${check_r}-${check_c}`);
-        if(check_stone.dataset.status == 2 || check_stone.innerHTML == ""){
-            console.log("チェック終了：裏返し無し")
-            break;
-        }else if(check_stone.innerHTML == you.stone){
-            console.log("チェック終了：同色の石");
-            stone_other_side = "exist";
-            break;
-        }else{
-            check_c = check_c + 1;
-            another_stone_num = another_stone_num + 1;
-        }
-    };
-    if(stone_other_side == "exist" && another_stone_num > 0){
-        document.getElementById(id).innerHTML = you.stone;
-        for(let i=0; i<another_stone_num; i++){
-            document.getElementById(`stone${this_r}-${this_c + i + 1}`).innerHTML = you.stone;
-        };
-    };
-    // if(stone_other_side == "exist" && another_stone_num > 0){
-    //     for(let i=0; i<another_stone_num; i++){
-    //         document.getElementById(`stone${this_r+i}-${this_c}`).innerHTML = you.stone;
-    //     }
-    // }
-}
 
 function test(){
 
