@@ -43,11 +43,14 @@ function PutStone(){
     }else if(status_around.above != 1 && status_around.under != 1 && status_around.right != 1 && status_around.left != 1){
         alert("Error: Put to other cell!");
     }else{
-        ReverseCheck_N(this_r, this_c, this.id);
-        ReverseCheck_E(this_r, this_c, this.id);
-
-
-
+        ReverseCheck(this_r, this_c, this.id, "N");
+        ReverseCheck(this_r, this_c, this.id, "NE");
+        ReverseCheck(this_r, this_c, this.id, "E");
+        ReverseCheck(this_r, this_c, this.id, "SE");
+        ReverseCheck(this_r, this_c, this.id, "S");
+        ReverseCheck(this_r, this_c, this.id, "SW");
+        ReverseCheck(this_r, this_c, this.id, "W");
+        ReverseCheck(this_r, this_c, this.id, "NW");
         if(you.player == "A"){
             you.player = "B";
             you.stone = "○";
@@ -59,9 +62,117 @@ function PutStone(){
     };
 }
 
+function ReverseCheck(this_r, this_c, id, direction){
+    let check_r
+    let check_c
+    if(direction == "N"){
+        let check_r = this_r - 1;
+        let check_c = this_c;
+    }else if(direction == "NE"){
+        let check_r = this_r - 1;
+        let check_c = this_c + 1;
+    }else if(direction == "E"){
+        let check_r = this_r;
+        let check_c = this_c + 1;
+    }else if(direction == "SE"){
+        let check_r = this_r + 1;
+        let check_c = this_c + 1;
+    }else if(direction == "S"){
+        let check_r = this_r + 1;
+        let check_c = this_c;
+    }else if(direction == "SW"){
+        let check_r = this_r + 1;
+        let check_c = this_c - 1;
+    }else if(direction == "W"){
+        let check_r = this_r;
+        let check_c = this_c - 1;
+    }else if(direction == "NW"){
+        let check_r = this_r - 1;
+        let check_c = this_c - 1;
+    }
+    let stone_other_side = "absent";
+    let another_stone_num = 0;
+    console.log(`you = player:${you.player}, stone:${you.stone}`);
+    console.log(`this_id: ${id}`);
+    for(let i=0; i<100; i++){
+        let check_stone = document.getElementById(`stone${check_r}-${check_c}`);
+        if(check_stone.dataset.status == 2 || check_stone.innerHTML == ""){
+            console.log("チェック終了：裏返し無し")
+            break;
+        }else if(check_stone.innerHTML == you.stone){
+            console.log("チェック終了：自分の石がある");
+            stone_other_side = "exist";
+            break;
+        }else{
+            if(direction == "N"){
+                check_r = check_r - 1;
+                check_c = check_c;
+            }else if(direction == "NE"){
+                check_r = check_r - 1;
+                check_c = check_c + 1;
+            }else if(direction == "E"){
+                check_r = check_r;
+                check_c = check_c + 1;
+            }else if(direction == "SE"){
+                check_r = check_r + 1;
+                check_c = check_c + 1;
+            }else if(direction == "S"){
+                check_r = check_r + 1;
+                check_c = check_c;
+            }else if(direction == "SW"){
+                check_r = check_r + 1;
+                check_c = check_c - 1;
+            }else if(direction == "W"){
+                check_r = check_r;
+                check_c = check_c - 1;
+            }else if(direction == "NW"){
+                check_r = check_r - 1;
+                check_c = check_c - 1;
+            }
+            another_stone_num = another_stone_num + 1;
+        }
+    };
+    if(stone_other_side == "exist" && another_stone_num > 0){
+        document.getElementById(id).innerHTML = you.stone;
+
+        if(direction == "N"){
+            for(let i=0; i<another_stone_num; i++){
+                document.getElementById(`stone${this_r - 1 - i}-${this_c}`).innerHTML = you.stone;
+            };
+        }else if(direction == "NE"){
+            for(let i=0; i<another_stone_num; i++){
+                document.getElementById(`stone${this_r - 1 - i}-${this_c + 1 + i}`).innerHTML = you.stone;
+            };
+        }else if(direction == "E"){
+            for(let i=0; i<another_stone_num; i++){
+                document.getElementById(`stone${this_r}-${this_c + 1 + i}`).innerHTML = you.stone;
+            };
+        }else if(direction == "SE"){
+            for(let i=0; i<another_stone_num; i++){
+                document.getElementById(`stone${this_r + 1 + i}-${this_c + 1 + i}`).innerHTML = you.stone;
+            };
+        }else if(direction == "S"){
+            for(let i=0; i<another_stone_num; i++){
+                document.getElementById(`stone${this_r + 1 + i}-${this_c}`).innerHTML = you.stone;
+            };
+        }else if(direction == "SW"){
+            for(let i=0; i<another_stone_num; i++){
+                document.getElementById(`stone${this_r + 1 + i}-${this_c - 1 - i}`).innerHTML = you.stone;
+            };
+        }else if(direction == "W"){
+            for(let i=0; i<another_stone_num; i++){
+                document.getElementById(`stone${this_r}-${this_c - 1 - i}`).innerHTML = you.stone;
+            };
+        }else if(direction == "NW"){
+            for(let i=0; i<another_stone_num; i++){
+                document.getElementById(`stone${this_r - 1 - i}-${this_c - 1 - i}`).innerHTML = you.stone;
+            };
+        };
+    };
+};
+
 function ReverseCheck_N(this_r, this_c, id){
     //上方向にチェック
-        //1つ上を見る。石がない/同じ石なら終了。違う石ならもう一つ上を見る
     let check_r = this_r - 1;
     let check_c = this_c;
     let stone_other_side = "absent";
@@ -91,8 +202,7 @@ function ReverseCheck_N(this_r, this_c, id){
 }
 
 function ReverseCheck_E(this_r, this_c, id){
-    //上方向にチェック
-        //1つ上を見る。石がない/同じ石なら終了。違う石ならもう一つ上を見る
+    //右方向にチェック
     let check_r = this_r;
     let check_c = this_c + 1;
     let stone_other_side = "absent";
