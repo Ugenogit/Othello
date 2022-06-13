@@ -1,6 +1,22 @@
-.stone{
-    width: 1rem;
-    height: 1rem;
-    padding: 0px;
-    border: solid 1px black;
+:root{
+    --cell-length:30px;
 }
+.stone{
+    width: var(--cell-length);
+    height: var(--cell-length);
+    padding: 0px;
+    border: solid 1px white;
+    background-color: rgb(6, 211, 6);
+}
+table{
+    border-collapse: collapse;
+    border-spacing: 0;
+}
+td{
+    --cell-width: var(--cell-length);
+    height: var(--cell-length);
+    text-align: center;
+    vertical-align: center;
+    padding: 0;
+}
+
